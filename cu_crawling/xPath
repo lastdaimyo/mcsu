@@ -3,4 +3,4 @@
 "address": //div//p[contains(.,'Адрес')]/text()
 "geocoords": //div//p[contains(.,'Геокоординаты')]/text()
 "org_name": //p/a[contains(@href,'brand')]/text()
-"org_description": //div[contains(@class, 'description_brand')]/text()
+"org_description": //div[contains(@class, 'description_brand')]//text()
