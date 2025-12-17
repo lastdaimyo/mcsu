@@ -4,11 +4,10 @@ import scrapy
 class ChitaiGorodRuSpider(scrapy.spiders.SitemapSpider):
     name = "chitai_gorod_ru"
     allowed_domains = ["chitai-gorod.ru"]
-    start_urls = ["https://chitai-gorod.ru"]
 
-    sitemap_urls = ("https://chitai-gorod.ru/sitemap/books-series1.xml", )
-    sitemap_follow = []
-    sitemap_rules = [("/product", "parse")]
+    sitemap_urls = ("https://chitai-gorod.ru/sitemap.xml", )
+    sitemap_follow = ["/products"]
+    sitemap_rules = [("product/", "parse")]
 
     custom_settings = {
         'ITEM_PIPELINES': {
@@ -19,27 +18,7 @@ class ChitaiGorodRuSpider(scrapy.spiders.SitemapSpider):
     }
 
     def parse(self, response: scrapy.http.Response):
-        book_urls = ""
-
-        yield from response.follow_all(
-            urls=book_urls,
-            cb_kwargs={"org_description": org_description},
-            callback=self.parse_book,
-        )
-
-    def parse_book(self, response: scrapy.http.Response):
         return {
-            "title": "",
-            "author": "",
-            "description": "",
-            "price_amount": "",
-            "price_currency": "",
-            "rating_value": "",
-            "rating_count": "",
-            "publication_year": "",
-            "isbn": "",
-            "pages_cnt": "",
-            "publisher": "",
-            "book_cover": "",
-            "source_url": response.url,
+            "title": response.xpath("//h1/text()").extract_first(),
+            "isbn": response.xpath("//span[@itemprop='isbn']/span/text()").get(),
         }

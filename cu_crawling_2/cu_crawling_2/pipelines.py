@@ -10,18 +10,10 @@ from itemadapter import ItemAdapter
 class CuCrawling2PipelineMongoDB:
     def __init__(self):
         self.mongo_db = "items"
-        self.mongo_uri = f"mongodb://admin:adminpass@localhost:27017/{self.mongo_db}"
-
-    @classmethod
-    def from_crawler(cls, crawler):
-        return cls(
-            mongo_uri=crawler.settings.get('MONGO_URI'),
-            mongo_db=crawler.settings.get('MONGO_DATABASE'),
-        )
-
-    def open_spider(self, spider):
+        self.mongo_uri = f"mongodb://admin:admin@localhost:27017/{self.mongo_db}"
         self.client = pymongo.MongoClient(self.mongo_uri)
         self.db = self.client[self.mongo_db]
+        self.collection_name = "collection"
 
     def close_spider(self, spider, reason):
         self.client.close()
