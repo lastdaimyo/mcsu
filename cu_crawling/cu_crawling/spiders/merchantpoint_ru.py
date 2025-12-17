@@ -1,13 +1,39 @@
 import scrapy
 
+# For HTML parsing only one web page
+# class MerchantpointRuSpider(scrapy.Spider):
+#     name = "merchantpoint_ru"
+#     allowed_domains = ["merchantpoint.ru"]
+#     start_urls = ["https://merchantpoint.ru/brand/4390"]  # для мотобайков
+#     USE only custom pipelines
+#     custom_settings = {
+#         'ITEM_PIPELINES': {
+#             "cu_crawling.pipelines.CuCrawlingPipeline": 300,
+#         },
+#     }
 
-class MerchantpointRuSpider(scrapy.Spider):
+# For XML Parsing
+class MerchantpointRuSpider(scrapy.spiders.SitemapSpider):
     name = "merchantpoint_ru"
     allowed_domains = ["merchantpoint.ru"]
-    start_urls = ["https://merchantpoint.ru/brand/4390"]  # для мотобайков
+    sitemap_urls = ("https://merchantpoint.ru/sitemap/brands.xml", )
+    sitemap_rules = [("/brand", "parse")]
+
+    custom_settings = {
+        'ITEM_PIPELINES': {
+            "cu_crawling.pipelines.CuCrawlingPipeline": 300,
+        },
+        # to stop as fast as limit will be exceeded
+        "CLOSESPIDER_ITEMCOUNT": 30,
+    }
 
     def parse(self, response: scrapy.http.Response):
-        org_description = response.xpath("//div[contains(@class, 'description_brand')]/text()").get()
+        # get валиден только, если от xpath ожидается исключительно один объект
+        # getall уже возвращает список объектов
+        raw_org_description = response.xpath("//div[contains(@class, 'description_brand')]//text()").getall()
+        # склеивание на уровне паука дешевле, чем обрабатывать в pipeline
+        # в pipeline лучше обеспечивать обработку "тяжелых" объектов с привлечением внешних зависимостей
+        org_description = " ".join(raw_org_description)
         merchant_urls = response.xpath("//table[@class='finance-table']//a/@href").getall()
 
         yield from response.follow_all(
