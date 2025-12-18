@@ -1,13 +1,12 @@
 title: //h1/text()
-author
-description
-price_amount
-price_currency
-rating_value
-rating_count
-publication_year
-isbn
-pages_cnt
-publisher
-book_cover
-source_url
+author: //ul[@class='product-authors')]//li/a/text()
+description: //div[contains(@class, 'product-description')]/text()
+price_amount: //div[@class='product-offer']//meta[@itemprop='price']/@content
+price_currency: //div[@class='product-offer']//meta[@itemprop='price']/@content
+rating_value: //span[@class='product-rating-detail__count']/text()
+rating_count: //span[@class='product-rating__votes']/span[contains(., 'оценки')]/@content
+publication_year: //span[@itemprop='datePublished']/span/text()
+isbn: //span[@itemprop='isbn']/span/text()
+pages_cnt: //div[@id='properties']//span[@itemprop='numberOfPages']/span/text()
+publisher: //span[@itemprop='publisher']/@content
+book_cover: //div[@class='product-preview']//img/@src

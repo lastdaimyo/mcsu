@@ -10,7 +10,7 @@ from itemadapter import ItemAdapter
 class CuCrawling2PipelineMongoDB:
     def __init__(self):
         self.mongo_db = "items"
-        self.mongo_uri = f"mongodb://admin:admin@localhost:27017/{self.mongo_db}"
+        self.mongo_uri = f"mongodb://admin:admin@localhost:27017/{self.mongo_db}?authSource=admin"
         self.client = pymongo.MongoClient(self.mongo_uri)
         self.db = self.client[self.mongo_db]
         self.collection_name = "collection"
@@ -19,4 +19,5 @@ class CuCrawling2PipelineMongoDB:
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
+        if item:
+            self.db[self.collection_name].insert_one(ItemAdapter(item).asdict())
