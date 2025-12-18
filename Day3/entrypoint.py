@@ -28,12 +28,12 @@ app = FastAPI(title="Book ISBN Search Service", description="Study Case Example"
 
 
 async def get_mongo_db() -> AsyncCollection[Mapping[str, Any] | Any]:
-    mongo_user = getenv("MONGO_USER")
-    mongo_password = getenv("MONGO_PASSWORD")
+    mongo_user = getenv("MONGO_USER", "admin")
+    mongo_password = getenv("MONGO_PASSWORD", "admin")
     mongo_port = getenv("MONGO_PORT", 27017)
-    mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@localhost:{mongo_port}/"
+    mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@localhost:{mongo_port}/?authSource=admin"
     mongo_db = getenv("MONGO_DATABASE", "items")
-    mongo_db_collection = getenv("MONGO_DATABASE_COLLECTION", "scraped_books")
+    mongo_db_collection = getenv("MONGO_DATABASE_COLLECTION", "collection")
     client = pymongo.AsyncMongoClient(mongo_uri)
     return client[mongo_db][mongo_db_collection]
 
